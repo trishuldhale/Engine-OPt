@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GEB Smart Engine | Two-Wheeler Fuel Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">G</div>
+        <div>
+          <div class="brand-title">GEB SMART</div>
+          <div class="brand-sub">ENGINE INTELLIGENCE</div>
+        </div>
+      </div>
+
+      <nav>
+        <button class="nav-btn active" data-view="optimizer">⚡ Smart Optimizer</button>
+        <button class="nav-btn" data-view="vehicle">🏍 Vehicle Explorer</button>
+        <button class="nav-btn" data-view="simulator">🧪 What-if Simulator</button>
+        <button class="nav-btn" data-view="dataset">🗃 Dataset & Model</button>
+      </nav>
+
+      <div class="sidebar-note">
+        <strong>Prototype mode</strong>
+        <p>The UI is ready for your real experimental CSV/XLSX. The supplied screenshots are used only for the visible vehicle records and one demonstrated GEB result.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">TWO-WHEELER FUEL INTELLIGENCE</div>
+          <h1>Gasoline–Ethanol–Butanol Prediction & Multi-Objective Optimization</h1>
+          <p>Vehicle-aware blend recommendation, performance prediction and controlled what-if analysis.</p>
+        </div>
+        <div class="status-pill"><span></span> Model interface ready</div>
+      </header>
+
+      <!-- OPTIMIZER -->
+      <section id="optimizer" class="view active">
+        <div class="section-head">
+          <div>
+            <h2>⚡ Smart Blend Optimizer</h2>
+            <p>Enter the engine and vehicle conditions, then find the best candidate GEB blend.</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <article class="card">
+            <div class="card-title">1. Engine operating condition</div>
+            <div class="form-grid">
+              <label>Compression Ratio
+                <input id="cr" type="number" min="7" max="14" step="0.1" value="9.5">
+              </label>
+              <label>Torque (Nm)
+                <input id="torque" type="number" min="1" max="12" step="0.1" value="5.0">
+              </label>
+              <label>Speed (RPM)
+                <input id="rpm" type="number" min="1500" max="3500" step="100" value="3000">
+              </label>
+              <label>Launch / emission era
+                <select id="era">
+                  <option value="pre">Before BS6</option>
+                  <option value="post" selected>BS6 / After BS6</option>
+                </select>
+              </label>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-title">2. Vehicle identity</div>
+            <div class="form-grid">
+              <label>Company
+                <select id="company"></select>
+              </label>
+              <label>Model
+                <select id="model"></select>
+              </label>
+              <label>Launch year
+                <input id="year" type="number" readonly>
+              </label>
+              <label>Category
+                <input id="category" type="text" readonly>
+              </label>
+            </div>
+            <div id="vehicleHint" class="hint"></div>
+          </article>
+        </div>
+
+        <div class="domain-check">
+          <div><b>Operating-domain check</b><span id="domainText">Checking...</span></div>
+          <div><b>Fuel policy check</b><span id="fuelText">Checking...</span></div>
+          <div><b>Vehicle match</b><span id="vehicleText">Checking...</span></div>
+        </div>
+
+        <button class="primary-btn" id="optimizeBtn">🚀 FIND BEST GEB BLEND</button>
+
+        <div id="optimizerResult" class="result-grid"></div>
+      </section>
+
+      <!-- VEHICLE -->
+      <section id="vehicle" class="view">
+        <div class="section-head">
+          <div>
+            <h2>🏍 Vehicle Explorer</h2>
+            <p>Two-wheeler specifications from the supplied master-table screenshots.</p>
+          </div>
+          <input class="search" id="vehicleSearch" placeholder="Search company, model, category...">
+        </div>
+        <div class="table-card">
+          <table>
+            <thead><tr><th>Company</th><th>Model</th><th>CR</th><th>Category</th><th>Recommended fuel</th><th>Fuel blend</th><th>Year</th><th>BS norm</th><th>Est. mileage</th></tr></thead>
+            <tbody id="vehicleTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SIMULATOR -->
+      <section id="simulator" class="view">
+        <div class="section-head">
+          <div>
+            <h2>🧪 What-if Performance Simulator</h2>
+            <p>Change operating point and blend composition to see the model interface respond.</p>
+          </div>
+          <div class="demo-tag">DEMO ENGINE • replace with trained model</div>
+        </div>
+
+        <div class="grid-2">
+          <article class="card">
+            <div class="card-title">Inputs</div>
+            <div class="slider-row"><span>Compression Ratio</span><output id="simCrOut">9.5</output></div>
+            <input id="simCr" type="range" min="7.4" max="12.8" step="0.1" value="9.5">
+            <div class="slider-row"><span>Torque (Nm)</span><output id="simTorqueOut">5.0</output></div>
+            <input id="simTorque" type="range" min="1.9" max="8.1" step="0.1" value="5">
+            <div class="slider-row"><span>Speed (RPM)</span><output id="simRpmOut">3000</output></div>
+            <input id="simRpm" type="range" min="1700" max="3300" step="100" value="3000">
+
+            <div class="blend-grid">
+              <label>Gasoline %<input id="g" type="number" min="0" max="100" value="90"></label>
+              <label>Ethanol %<input id="e" type="number" min="0" max="100" value="10"></label>
+              <label>Butanol %<input id="b" type="number" min="0" max="100" value="0"></label>
+            </div>
+            <div id="blendTotal" class="total-badge">Total: 100%</div>
+            <button class="secondary-btn" id="simulateBtn">Calculate predicted performance</button>
+          </article>
+
+          <article class="card">
+            <div class="card-title">Predicted outputs</div>
+            <div id="simResult" class="metric-grid"></div>
+            <div class="chart-wrap">
+              <div class="chart-title">Relative objective profile</div>
+              <div class="bar-row"><span>BTE ↑</span><div><i id="barBte"></i></div></div>
+              <div class="bar-row"><span>BSFC ↓</span><div><i id="barBsfc"></i></div></div>
+              <div class="bar-row"><span>CO ↓</span><div><i id="barCo"></i></div></div>
+              <div class="bar-row"><span>HC ↓</span><div><i id="barHc"></i></div></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- DATASET -->
+      <section id="dataset" class="view">
+        <div class="section-head">
+          <div>
+            <h2>🗃 Dataset & Model</h2>
+            <p>How the dashboard should connect to your actual experimental dataset.</p>
+          </div>
+        </div>
+        <div class="model-cards">
+          <div class="info-card"><strong>Vehicle master</strong><span>29 two-wheelers visible in the supplied screenshots</span></div>
+          <div class="info-card"><strong>Experimental dataset</strong><span>Screenshot states 326 cleaned records and 18 experimental GEB compositions</span></div>
+          <div class="info-card"><strong>Optimization</strong><span>BTE ↑ · BSFC ↓ · CO ↓ · HC ↓</span></div>
+          <div class="info-card"><strong>Recommended production architecture</strong><span>HTML/CSS/JS frontend + Python API + trained ANN/XGBoost model + CSV/XLSX data pipeline</span></div>
+        </div>
+        <article class="card">
+          <div class="card-title">Expected experimental columns</div>
+          <pre>compression_ratio, torque_nm, rpm,
+gasoline_pct, ethanol_pct, butanol_pct,
+bte_pct, bsfc_g_kwh, co_vol_pct, hc_ppm, ron</pre>
+          <p class="small">For a scientifically defensible prediction engine, do not estimate missing experimental rows from screenshots. Load the original CSV/XLSX and train/validate the model on the complete data.</p>
+        </article>
+      </section>
+
+      <footer>GEB Smart Engine • Two-wheeler decision-support prototype • Predictions are model outputs, not certified vehicle calibration.</footer>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
